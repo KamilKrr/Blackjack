@@ -10,42 +10,72 @@ public class Simulation_Environment {
 
         Deck deck = new Deck();
 
-        while(deck.cardsLeft() > 20){
+        while (deck.cardsLeft() > 20) {
             Hand dealer = new Hand();
             dealer.acceptCard(deck.dealOne(true));
             dealer.acceptCard(deck.dealOne(false));
 
             Hand player = new Hand();
-            player.acceptCard(deck.dealOne(true));
-            player.acceptCard(deck.dealOne(true));
+            Card ace = new Card("ACE", 1);
+            Card ten = new Card("TEN", 10);
+            ace.setFaceUp(true);
+            ten.setFaceUp(true);
+            //player.acceptCard(deck.dealOne(true));
+            //player.acceptCard(deck.dealOne(true));
+            player.acceptCard(ten);
+            player.acceptCard(ten);
 
 
             System.out.println("Dealer: " + dealer.displayHand() + " |Sum: " + dealer.getSum());
             System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
 
-            while(true){
-                System.out.println("_____");
-                System.out.println("Choose your action: (s for stand, h for hit, d for double)");
-                String action = sc.nextLine();
-                if(action.equals("h")){
-                    player.acceptCard(deck.dealOne(true));
-                    System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
+            while (true) {
+                if (player.getSum() == 21) {
+                    break;
+                } else if (player.doubleCard()) {
+                    System.out.println("_____");
+                    System.out.println("Choose your action: (s for stand, h for hit, d for double, p for split)");
+                    String action = sc.nextLine();
+                    if (action.equals("h")) {
+                        player.acceptCard(deck.dealOne(true));
+                        System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
 
-                    if(player.getSum() > 21){
+                        if (player.getSum() > 21) {
+                            break;
+                        }
+                    } else if (action.equals("s")) {
+                        break;
+                    } else if (action.equals("d")) {
+                        player.acceptCard(deck.dealOne(true));
+                        System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
+                        break;
+                    } else if (action.equals("p")) {
+                        player.removeLast();
+                    }
+                } else {
+                    System.out.println("_____");
+                    System.out.println("Choose your action: (s for stand, h for hit, d for double)");
+                    String action = sc.nextLine();
+                    if (action.equals("h")) {
+                        player.acceptCard(deck.dealOne(true));
+                        System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
+
+                        if (player.getSum() > 21) {
+                            break;
+                        }
+                    } else if (action.equals("s")) {
+                        break;
+                    } else if (action.equals("d")) {
+                        player.acceptCard(deck.dealOne(true));
+                        System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
                         break;
                     }
-                }else if(action.equals("s")){
-                    break;
-                }else if(action.equals("d")){
-                    player.acceptCard(deck.dealOne(true));
-                    System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
-                    break;
                 }
             }
 
             dealer.reveal();
 
-            while(dealer.getSum() < 17){
+            while (dealer.getSum() < 17) {
                 dealer.acceptCard(deck.dealOne(true));
             }
 
@@ -56,9 +86,9 @@ public class Simulation_Environment {
 
             System.out.println("You: " + playerSum + " Dealer: " + dealerSum);
 
-            if(playerSum > 21 || (playerSum < dealerSum && dealerSum <= 21)){
+            if (playerSum > 21 || (playerSum < dealerSum && dealerSum <= 21)) {
                 System.out.println("You loose");
-            }else{
+            } else {
                 System.out.println("You win");
             }
 

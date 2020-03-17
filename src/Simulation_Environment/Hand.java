@@ -14,6 +14,15 @@ public class Hand {
         myCards[numberOfCards++] = card;
     }
 
+    public void removeLast() {
+        numberOfCards--;
+    }
+
+
+
+    public boolean doubleCard() {
+        return (myCards[0].getMyValue() == myCards[1].getMyValue());
+    }
 
     public String displayHand(){
         String display = "";
