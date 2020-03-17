@@ -25,7 +25,7 @@ public class Simulation_Environment {
 
             while(true){
                 System.out.println("_____");
-                System.out.println("Choose your action: (s for stand, h for hit)");
+                System.out.println("Choose your action: (s for stand, h for hit, d for double)");
                 String action = sc.nextLine();
                 if(action.equals("h")){
                     player.acceptCard(deck.dealOne(true));
@@ -35,6 +35,10 @@ public class Simulation_Environment {
                         break;
                     }
                 }else if(action.equals("s")){
+                    break;
+                }else if(action.equals("d")){
+                    player.acceptCard(deck.dealOne(true));
+                    System.out.println("Player: " + player.displayHand() + " |Sum: " + player.getSum());
                     break;
                 }
             }
