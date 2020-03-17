@@ -10,6 +10,9 @@ public class InputProcessor {
     }
 
     public String getInput(String question){
+        System.out.println(question);
+        String input = sc.nextLine();
 
+        return input;
     }
 }
