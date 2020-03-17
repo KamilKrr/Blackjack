@@ -4,6 +4,7 @@ public class Hand {
     private Card[] myCards;
     private int numberOfCards;
     private int maxCards = 10;
+    private double money = 0.0;//€
 
     public Hand(){
         myCards = new Card[maxCards];
@@ -69,6 +70,14 @@ public class Hand {
         }
 
         return sum;
+    }
+
+    public double getMoney(){
+        return money;
+    }
+
+    public void setMoney(double setMoney){
+        money = setMoney;
     }
 }
 

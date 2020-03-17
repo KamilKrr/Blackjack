@@ -15,4 +15,39 @@ public class InputProcessor {
 
         return input;
     }
+
+    //Hit
+    //Stand
+    //Split
+    //Double
+    //Insurance
+    public String chooseAction(){
+        String option = sc.nextLine();
+        String result = "";
+
+        switch (option.toLowerCase()){
+            case "hit":
+            case "h":
+                result = "hit";
+                break;
+            case "stand":
+            case "s":
+                result = "stand";
+                break;
+            case "split":
+                result = "split";
+                break;
+            case "double":
+            case "d":
+                result = "double";
+                break;
+            case "insurance":
+            case "i":
+            case "insure":
+                result = "insurance";
+                break;
+        }
+
+        return result;
+    }
 }
