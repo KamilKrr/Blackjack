@@ -20,6 +20,7 @@ public class Simulation_Environment {
             Card ten = new Card("TEN", 10);
             ace.setFaceUp(true);
             ten.setFaceUp(true);
+
             player.acceptCard(deck.dealOne(true));
             player.acceptCard(deck.dealOne(true));
             //player.acceptCard(ten);

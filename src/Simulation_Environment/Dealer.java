@@ -1,8 +1,9 @@
 package Simulation_Environment;
 
-import java.util.ArrayList;
 
 public class Dealer {
+    public int passesOn = 17;
+
     private double cash = 0;
 
     private Hand myHand;
@@ -28,4 +29,17 @@ public class Dealer {
     public Hand getHand(){
         return myHand;
     }
+
+    public void reveal(){
+        myHand.reveal();
+    }
+
+    public int getSum(){
+        return myHand.getSum();
+    }
+
+    public String displayHand(){
+        return myHand.displayHand();
+    }
+
 }

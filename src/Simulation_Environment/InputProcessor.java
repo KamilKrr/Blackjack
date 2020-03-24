@@ -23,6 +23,11 @@ public class InputProcessor {
     //Insurance
     public String chooseAction(){
         String option = sc.nextLine();
+
+        return normalize(option);
+    }
+
+    public String normalize(String option){
         String result = "";
 
         switch (option.toLowerCase()){
@@ -35,6 +40,7 @@ public class InputProcessor {
                 result = "stand";
                 break;
             case "split":
+            case "p":
                 result = "split";
                 break;
             case "double":

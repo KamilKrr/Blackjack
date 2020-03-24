@@ -5,6 +5,8 @@ public class Hand {
     private int numberOfCards;
     private int maxCards = 10;
     private double money = 0.0;//€
+    private boolean blocked = false;//cannot act -> after spltting two aces
+    private boolean hasDoubled = false;//true if player chose to double
 
     public Hand(){
         myCards = new Card[maxCards];
@@ -19,12 +21,19 @@ public class Hand {
         numberOfCards--;
     }
 
-    public boolean isDoubleCard() {
-        return (myCards[0].getMyValue() == myCards[1].getMyValue());
+    public Card getLastCard() {
+        return myCards[1];
     }
 
-    public boolean isDoubleAces(){
-        return (isDoubleCard() && myCards[0].getMyValue() == 1);
+    public boolean isDoubleCard() {
+        return (myCards[0].getMyValue() == myCards[1].getMyValue() && numberOfCards == 2);
+    }
+
+    public boolean containsAce() {
+        for (int i = 0; i < numberOfCards; i++) {
+            if(myCards[i].getMyValue() == 1) {return true;}
+        }
+        return false;
     }
 
     public String displayHand(){
@@ -74,12 +83,36 @@ public class Hand {
         return sum;
     }
 
+    public int getNumberOfCards(){
+        return numberOfCards;
+    }
+
     public double getMoney(){
         return money;
     }
 
     public void setMoney(double setMoney){
         money = setMoney;
+    }
+
+    public void block(){
+        blocked = true;
+    }
+
+    public void unblock(){
+        blocked = false;
+    }
+
+    public boolean isBlocked(){
+        return blocked;
+    }
+
+    public void doubleDown(){
+        hasDoubled = true;
+    }
+
+    public boolean hasDoubled(){
+        return hasDoubled;
     }
 }
 

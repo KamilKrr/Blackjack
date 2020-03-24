@@ -16,6 +16,12 @@ public class Player {
         name = "Player#" + (int)Math.floor(Math.random()*100);
     }
 
+    public Player(boolean myIsAuto) {
+        String type = myIsAuto ? "Bot" : "Player";
+        name = type + "#" + (int)Math.floor(Math.random()*100);
+        isAuto = myIsAuto;
+    }
+
     public Player(double myCash, String myName, boolean myIsAuto) {
         cash = myCash;
         name = myName;
@@ -28,5 +34,9 @@ public class Player {
 
     public String getName(){
         return name;
+    }
+
+    public boolean isAuto(){
+        return isAuto;
     }
 }

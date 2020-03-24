@@ -36,5 +36,9 @@ public class Card {
     public boolean isFaceUp() {
         return isFaceUp;
     }
+
+    public boolean isAce(){
+        return (myValue == 1);
+    }
 }
 
