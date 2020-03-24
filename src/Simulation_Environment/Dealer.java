@@ -24,4 +24,8 @@ public class Dealer {
     public void acceptCard(Card card){
         myHand.acceptCard(card);
     }
+
+    public Hand getHand(){
+        return myHand;
+    }
 }

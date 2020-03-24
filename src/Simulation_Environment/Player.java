@@ -13,7 +13,7 @@ public class Player {
     private boolean isAuto;
 
     public Player() {
-
+        name = "Player#" + (int)Math.floor(Math.random()*100);
     }
 
     public Player(double myCash, String myName, boolean myIsAuto) {
@@ -24,5 +24,9 @@ public class Player {
 
     public void addHand(Hand hand) {
         myHands.add(hand);
+    }
+
+    public String getName(){
+        return name;
     }
 }

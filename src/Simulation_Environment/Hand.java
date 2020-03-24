@@ -19,10 +19,12 @@ public class Hand {
         numberOfCards--;
     }
 
-
-
-    public boolean doubleCard() {
+    public boolean isDoubleCard() {
         return (myCards[0].getMyValue() == myCards[1].getMyValue());
+    }
+
+    public boolean isDoubleAces(){
+        return (isDoubleCard() && myCards[0].getMyValue() == 1);
     }
 
     public String displayHand(){

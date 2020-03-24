@@ -9,8 +9,15 @@ public class Blackjack {
 
     private Player[] players;
 
+    public static void main(String[] args) {
+        Blackjack bj = new Blackjack(1);
+
+        bj.newRound();
+    }
+
     public Blackjack(int playerCount){
         newGame(playerCount);
+        inputProcessor = new InputProcessor();
     }
 
     public void newGame(int playerCount){
@@ -48,13 +55,39 @@ public class Blackjack {
             }
         }
 
+        //TODO: Interface
+        //show dealer cards
+        System.out.println(dealer.getHand().displayHand());
+
         //let each player choose an action for each hand
         for (int i = 0; i < players.length; i++) {
             for (int j = 0; j < players[i].myHands.size(); j++) {
-                players[i].myHands.get(j).
+                Player currentPlayer = players[i];
+                Hand currentHand = currentPlayer.myHands.get(j);
+                while (true){
+
+                    //TODO: Interface
+                    System.out.println(currentPlayer.getName() + "'s turn");
+                    System.out.println(currentHand.displayHand());
+                    System.out.println("Sum: " + currentHand.getSum());
+
+                    if(currentHand.getSum() == 21){
+                        System.out.println("Blackjack!");
+                        break;
+                    }else{
+                        if(currentHand.isDoubleCard()){
+                            System.out.println();
+                        }
+                    }
+
+                    System.out.println("Choose your action");
+                    String action = inputProcessor.chooseAction();
+                    System.out.println(action);
+
+
+                }
             }
         }
-        String action = inputProcessor.chooseAction();
 
 
 

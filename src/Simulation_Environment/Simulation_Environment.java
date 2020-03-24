@@ -32,7 +32,7 @@ public class Simulation_Environment {
             while (true) {
                 if (player.getSum() == 21) {
                     break;
-                } else if (player.doubleCard()) {
+                } else if (player.isDoubleCard()) {
                     System.out.println("_____");
                     System.out.println("Choose your action: (s for stand, h for hit, d for double, p for split)");
                     String action = sc.nextLine();
