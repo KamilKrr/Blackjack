@@ -308,6 +308,7 @@ public class BasicStrategyPlayer {
 
         String action = basicStrategy.get(dealer).get(player);
 
+
         if (action.charAt(0) == 'D') {
             if(numberOfCards == 2 && bankroll >= currentBet) { action = "D"; }
             else { action = action.charAt(1) + ""; }

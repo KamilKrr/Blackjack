@@ -6,6 +6,8 @@ public class Player {
 
     private double cash;
 
+    public int wins, loses, draws = 0;
+
     public ArrayList<Hand> myHands = new ArrayList<>();
 
     private String name = "";
@@ -28,6 +30,10 @@ public class Player {
         isAuto = myIsAuto;
     }
 
+    public void removeHands(){
+        myHands.clear();
+    }
+
     public void addHand(Hand hand) {
         myHands.add(hand);
     }
@@ -38,5 +44,23 @@ public class Player {
 
     public boolean isAuto(){
         return isAuto;
+    }
+
+
+
+    public void win(){
+        wins += 1;
+    }
+
+    public void lose(){
+        loses += 1;
+    }
+
+    public void draw(){
+        draws += 1;
+    }
+
+    public String stats(){
+        return "wins: " + wins + ", loses: " + loses + ", draws: " + draws + ", % games won without draws: " + (double)wins / (wins+loses) * 100.0 + "%";
     }
 }

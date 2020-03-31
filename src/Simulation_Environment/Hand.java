@@ -1,9 +1,11 @@
 package Simulation_Environment;
 
+import java.util.Arrays;
+
 public class Hand {
     private Card[] myCards;
     private int numberOfCards;
-    private int maxCards = 10;
+    private int maxCards = 22;//maximum number of cards someone could have, only aces and hit on 21 (not realistic, only for crazy simulating)
     private double money = 0.0;//€
     private boolean blocked = false;//cannot act -> after spltting two aces
     private boolean hasDoubled = false;//true if player chose to double
@@ -26,7 +28,7 @@ public class Hand {
     }
 
     public boolean isDoubleCard() {
-        return (myCards[0].getMyValue() == myCards[1].getMyValue() && numberOfCards == 2);
+        return (numberOfCards == 2 && (myCards[0].getMyValue() == myCards[1].getMyValue()));
     }
 
     public boolean containsAce() {

@@ -42,4 +42,8 @@ public class Dealer {
         return myHand.displayHand();
     }
 
+    public boolean isAce(){
+        return (getSum() == 1);
+    }
+
 }

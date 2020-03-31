@@ -41,17 +41,7 @@ public class Deck {
         }
     }
 
-    public Card dealOne(boolean faceUpValue) {
-        if (nextCardPosition > -1 && nextCardPosition < deck.length) {
-            deck[nextCardPosition].setFaceUp(faceUpValue);
-            return deck[nextCardPosition++];
-        }
-        System.out.println("No Cards left");
-        return null;
-    }
-
-    public int cardsLeft()
-    {
-        return deck.length - nextCardPosition;
+    public Card[] getCrads(){
+        return deck;
     }
 }
