@@ -321,4 +321,13 @@ public class BasicStrategyPlayer {
 
         return action;
     }
+
+    public double placeBet(double bankroll){
+        //multiple of 5
+        //bet always 1/10 of bankroll
+        //int bet =  (int)(5*(Math.round(bankroll/10/5)));
+        //return bet;
+
+        return 10;
+    }
 }

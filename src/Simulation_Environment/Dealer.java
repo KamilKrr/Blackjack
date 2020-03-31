@@ -4,7 +4,7 @@ package Simulation_Environment;
 public class Dealer {
     public int passesOn = 17;
 
-    private double cash = 0;
+    public double cash = 0;
 
     private Hand myHand;
 

@@ -27,6 +27,24 @@ public class InputProcessor {
         return normalize(option);
     }
 
+    public double placeBet(){
+        while(true){
+            String input = sc.nextLine();
+            input = input.replaceAll(",", ".");
+            int bet = 0;
+            try{
+                bet = Integer.valueOf(input);
+                if(bet%5 != 0){
+                    System.out.println("Please choose a multiple of 5!");
+                    continue;
+                }
+                return bet;
+            }catch (Exception e){
+                System.out.println("Please use whole numbers only!");
+            }
+        }
+    }
+
     public String normalize(String option){
         String result = "";
 

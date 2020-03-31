@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 public class Player {
 
-    private double cash;
+    private double bankroll;
+    private double startingBankroll;
+    private double bet;
 
     public int wins, loses, draws = 0;
+    public double moneyWon, moneyLost = 0;
 
     public ArrayList<Hand> myHands = new ArrayList<>();
 
@@ -18,14 +21,17 @@ public class Player {
         name = "Player#" + (int)Math.floor(Math.random()*100);
     }
 
-    public Player(boolean myIsAuto) {
+    public Player(boolean myIsAuto, double myBankroll) {
         String type = myIsAuto ? "Bot" : "Player";
         name = type + "#" + (int)Math.floor(Math.random()*100);
         isAuto = myIsAuto;
+        bankroll = myBankroll;
+        startingBankroll = myBankroll;
+
     }
 
     public Player(double myCash, String myName, boolean myIsAuto) {
-        cash = myCash;
+        bankroll = myCash;
         name = myName;
         isAuto = myIsAuto;
     }
@@ -46,14 +52,18 @@ public class Player {
         return isAuto;
     }
 
-
-
-    public void win(){
+    public void win(double difference){
         wins += 1;
+
+        bankroll += difference;
+        moneyWon += difference;
     }
 
-    public void lose(){
+    public void lose(double difference){
         loses += 1;
+
+        bankroll -= difference;
+        moneyLost += difference;
     }
 
     public void draw(){
@@ -61,6 +71,32 @@ public class Player {
     }
 
     public String stats(){
-        return "wins: " + wins + ", loses: " + loses + ", draws: " + draws + ", % games won without draws: " + (double)wins / (wins+loses) * 100.0 + "%";
+        return "wins: " + wins + ", loses: " + loses + ", draws: " + draws + ", % games won without draws: " + (double)wins / (wins+loses) * 100.0 + "% Starting Bankroll: " + startingBankroll + "€ vs Bankroll now: " + bankroll + "€";//, total money won: " + moneyWon + "€ vs lost: " + moneyLost + "€";
+    }
+
+    public boolean canPlaceBet(double tryThisBet){
+        if(tryThisBet <= 0 || tryThisBet > bankroll){
+            return false;
+        }
+        return true;
+    }
+    public void placeBet(double bet){
+        this.bet = bet;
+    }
+
+    public double getBankroll(){
+        return bankroll;
+    }
+
+    public double getStartingBankroll(){
+        return startingBankroll;
+    }
+
+    public double getBet(){
+        return bet;
+    }
+
+    public boolean isBancrupt(){
+        return bankroll <= 0;
     }
 }

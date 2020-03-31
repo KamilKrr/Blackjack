@@ -1,7 +1,5 @@
 package Simulation_Environment;
 
-import java.util.Arrays;
-
 public class Hand {
     private Card[] myCards;
     private int numberOfCards;
@@ -9,6 +7,8 @@ public class Hand {
     private double money = 0.0;//€
     private boolean blocked = false;//cannot act -> after spltting two aces
     private boolean hasDoubled = false;//true if player chose to double
+    private boolean isBlackjack = false;//true if player wins with blackjack
+    private boolean isSplitted = false;//true if hand was splitted
 
     public Hand(){
         myCards = new Card[maxCards];
@@ -115,6 +115,22 @@ public class Hand {
 
     public boolean hasDoubled(){
         return hasDoubled;
+    }
+
+    public boolean isBlackjack(){
+        return isBlackjack;
+    }
+
+    public void blackjack(){
+        isBlackjack = true;
+    }
+
+    public void split(){
+        isSplitted = true;
+    }
+
+    public boolean isSplitted(){
+        return isSplitted;
     }
 }
 
