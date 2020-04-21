@@ -26,4 +26,9 @@ public class Observer {
     public ArrayList<Integer> getShoe(){
         return shoe;
     }
+
+    private void removeCard(int card){
+        //remove element not idnex
+        shoe.remove(Integer.valueOf(card));
+    }
 }
