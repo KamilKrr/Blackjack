@@ -5,4 +5,9 @@ public class Strategy_Engine {
         Observer o = new Observer(3);
 
     }
+
+    public String bestMove(){
+        //return Engine.bestMove();
+        return "";
+    }
 }
