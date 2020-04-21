@@ -6,13 +6,17 @@ import java.util.List;
 
 public class Shoe {
 
+    private ArrayList<Integer> cards;
+
+    public Shoe(){
+        cards = new ArrayList<>();
+    }
+
     public Shoe(Shoe anotherShoe){
         ArrayList<Integer> clone = new ArrayList<>();
         for (Integer card : anotherShoe.cards) clone.add(card.intValue());
         this.cards = clone;
     }
-
-    private ArrayList<Integer> cards = new ArrayList<>();
 
     public void addAll(List<Integer> extraCards){
         cards.addAll(extraCards);
