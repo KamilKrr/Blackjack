@@ -28,7 +28,7 @@ public class Observer {
     }
 
     private void removeCard(int card){
-        //remove element not idnex
+        //remove element not index
         shoe.remove(Integer.valueOf(card));
     }
 }
