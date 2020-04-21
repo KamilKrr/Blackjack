@@ -22,6 +22,10 @@ public class Observer {
 
         System.out.println(shoe.getCards());
         System.out.println(shoe.count(1));
+        System.out.println(shoe.count(10));
+        System.out.println(shoe.count(9));
+        System.out.println(shoe.countEqualsOrHigher(9));
+        System.out.println(shoe.countEqualsOrHigher(1));
     }
 
 

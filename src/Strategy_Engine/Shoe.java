@@ -23,4 +23,14 @@ public class Shoe {
     public int count(int card){
         return Collections.frequency(cards, card);
     }
+
+    public int countEqualsOrHigher(int card){
+        int count = 0;
+        for (int i = 0; i < cards.size(); i++) {
+            if(cards.get(i) >= card){
+                count++;
+            }
+        }
+        return count;
+    }
 }
