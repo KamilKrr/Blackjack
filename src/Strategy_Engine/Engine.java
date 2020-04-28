@@ -18,31 +18,46 @@ public class Engine {
     public static HashMap<Integer, Double> dealerProbabilities(Shoe shoe, int dealerCard, double probability, HashMap<Integer, Double> probabilities, boolean softHand) {
 
         if(!softHand) {
-            //TODO: Kann nicht 1 dazu bekommen wenn DealerHand <= 10 ist
-            for (int i = dealerCard + 1; i <= 16 && i <= dealerCard + 11; i++) {
-                Shoe s = new Shoe(shoe);
-                s.remove(i - dealerCard);
-                if (i != dealerCard + 11) {
-                    dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * 100 * probability, probabilities, false);
-                } else {
-                    dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * 100 * probability, probabilities, true);
+            if(dealerCard > 10) {
+                for (int i = dealerCard + 1; i <= 16; i++) {
+                    Shoe s = new Shoe(shoe);
+                    s.remove(i - dealerCard);
+                    dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability, probabilities, false);
                 }
+                for (int i = 17; i <= 21; i++) {
+                    probabilities.put(i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability + probabilities.get(i));
+                }
+                probabilities.put(22, shoe.countEqualsOrHigher(22 - dealerCard) / shoe.getCards().size() * probability + probabilities.get(22));
+            } else {
+                for (int i = dealerCard + 2; i <= 16 || i <= dealerCard + 11; i++) {
+                    Shoe s = new Shoe(shoe);
+                    if (i != dealerCard + 11) {
+                        s.remove(i - dealerCard);
+                        dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability, probabilities, false);
+                    } else {
+                        s.remove(1);
+                        dealerProbabilities(s, i, shoe.count(1) / shoe.getCards().size() * probability, probabilities, true);
+                    }
+                }
+                for (int i = 17; i <= 21; i++) {
+                    probabilities.put(i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability + probabilities.get(i));
+                }
+                probabilities.put(22, shoe.countEqualsOrHigher(22 - dealerCard) / shoe.getCards().size() * probability + probabilities.get(22));
             }
-            for (int i = 17; i <= 21; i++) {
-                probabilities.put(i, shoe.count(i - dealerCard) / shoe.getCards().size() * 100 * probability + probabilities.get(i));
-            }
-            probabilities.put(22, shoe.countEqualsOrHigher(22 - dealerCard) / shoe.getCards().size() * 100 * probability + probabilities.get(22));
         } else {
-            //TODO: Beide for Schleifen nochmal überprüfen ob sie auf soft hands zutreffen
-            for (int i = dealerCard + 1; i <= 16 && i <= dealerCard + 10; i++) {
+            for (int i = dealerCard + 1; i <= 16; i++) {
                 Shoe s = new Shoe(shoe);
                 s.remove(i - dealerCard);
-                dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * 100 * probability, probabilities, true);
+                dealerProbabilities(s, i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability, probabilities, true);
             }
             for (int i = 17; i <= 21; i++) {
-                probabilities.put(i, shoe.count(i - dealerCard) / shoe.getCards().size() * 100 * probability + probabilities.get(i));
+                probabilities.put(i, shoe.count(i - dealerCard) / shoe.getCards().size() * probability + probabilities.get(i));
             }
-            //TODO: Methode wird als hard hand aufgerufen wenn man über 21 hinaus geht
+            for (int i = 22; i <= dealerCard + 10; i++) {
+                Shoe s = new Shoe(shoe);
+                s.remove(i - dealerCard);
+                dealerProbabilities(s, i-10, shoe.count(i - dealerCard) / shoe.getCards().size() * probability, probabilities, false);
+            }
         }
 
         return probabilities;
