@@ -1,5 +1,7 @@
 package Strategy_Engine;
 
+import Simulation_Environment.Card;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,33 +13,50 @@ public class Observer {
     private ArrayList<Integer> myHand = new ArrayList<>();
     private int dealer;
 
+    private int cardSetsInDeck = 1;
+
 
     public Observer(int decksInShoe){
         shoe = new Shoe();
         this.decksInShoe = decksInShoe;
 
         for (int i = 0; i < decksInShoe; i++) {
-            shoe.addAll(deck);
+            for (int j = 0; j < cardSetsInDeck; j++) {
+                shoe.addAll(deck);
+            }
         }
 
+        /*
         System.out.println(shoe.getCards());
         System.out.println(shoe.count(1));
         System.out.println(shoe.count(10));
         System.out.println(shoe.count(9));
         System.out.println(shoe.countEqualsOrHigher(9));
         System.out.println(shoe.countEqualsOrHigher(1));
+        shoe.remove(21);
+        System.out.println(shoe.countEqualsOrHigher(1));
+        /**/
+
     }
 
-
-    public ArrayList<Integer> getShoe(){
-        return shoe.getCards();
+    public Shoe getShoe(){
+        return shoe;
     }
 
-    private void removeCard(int card){
+    public void removeCard(int card){
         shoe.remove(card);
     }
 
     public void observeCard(int card){
         removeCard(card);
+    }
+
+
+    public void observeCard(Card card){
+        removeCard(card.getMyValue());
+    }
+
+    public void display(){
+        System.out.println(shoe.getCards() + " | length: " + shoe.getCards().size());
     }
 }

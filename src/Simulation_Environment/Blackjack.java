@@ -1,5 +1,7 @@
 package Simulation_Environment;
 
+import Strategy_Engine.Observer;
+
 public class Blackjack {
     private InputProcessor inputProcessor;
 
@@ -9,9 +11,12 @@ public class Blackjack {
 
     private Player[] players;
 
-    private boolean print = false;
+    private boolean print = true;
 
     private double BANKROLL = 1000000;
+
+    //Card counter for the Strategy Engine
+    private Observer observer = new Observer(1);
 
     public Blackjack(int humanCount, int botCount){
         newGame(humanCount, botCount);
@@ -21,7 +26,7 @@ public class Blackjack {
     public void newGame(int humanPlayerCount, int basicStrategyPlayerCount){
         dealer = new Dealer();
 
-        shoe = new Shoe(8, 50);
+        shoe = new Shoe(1, 50);
 
         players = new Player[humanPlayerCount + basicStrategyPlayerCount];
 
@@ -59,8 +64,15 @@ public class Blackjack {
 
         //2 cards for the dealer
         //one hidden one visible
-        dealer.acceptCard(shoe.dealOne(true));
-        dealer.acceptCard(shoe.dealOne(false));
+        Card upcard = shoe.dealOne(true);
+        Card hiddenCard = shoe.dealOne(false);
+        dealer.acceptCard(upcard);
+        dealer.acceptCard(hiddenCard);
+
+        //card coutning
+        //only the upcard is visible at this point
+        observer.observeCard(upcard);
+
 
         //2 cards for each hand for each player
         //both visible
@@ -79,8 +91,17 @@ public class Blackjack {
                 players[i].myHands.get(j).acceptCard(ace);
                 players[i].myHands.get(j).acceptCard(ace);
                 /**/
-                players[i].myHands.get(j).acceptCard(shoe.dealOne(true));
-                players[i].myHands.get(j).acceptCard(shoe.dealOne(true));
+
+                Card card1 = shoe.dealOne(true);
+                Card card2 = shoe.dealOne(true);
+
+                players[i].myHands.get(j).acceptCard(card1);
+                players[i].myHands.get(j).acceptCard(card2);
+
+                //card counting
+                observer.observeCard(card1);
+                observer.observeCard(card2);
+
             }
         }
 
@@ -149,8 +170,16 @@ public class Blackjack {
                             Hand secondHand = new Hand();
                             secondHand.acceptCard(doubleCard);
 
-                            currentHand.acceptCard(shoe.dealOne(true));
-                            secondHand.acceptCard(shoe.dealOne(true));
+
+                            Card card1 = shoe.dealOne(true);
+                            Card card2 = shoe.dealOne(true);
+
+                            currentHand.acceptCard(card1);
+                            secondHand.acceptCard(card2);
+
+                            //card counting
+                            observer.observeCard(card1);
+                            observer.observeCard(card2);
 
                             currentHand.split();
                             secondHand.split();
@@ -166,7 +195,14 @@ public class Blackjack {
 
                         //----------HIT----------
                         if(action.equals("hit")){
-                            currentHand.acceptCard(shoe.dealOne(true));
+
+                            Card card = shoe.dealOne(true);
+
+                            currentHand.acceptCard(card);
+
+                            //card counting
+                            observer.observeCard(card);
+
                             continue;
                         }
 
@@ -187,7 +223,14 @@ public class Blackjack {
                                 continue;
                             }
 
-                            currentHand.acceptCard(shoe.dealOne(true));
+                            Card card = shoe.dealOne(true);
+
+                            currentHand.acceptCard(card);
+
+                            //card counting
+                            observer.observeCard(card);
+
+
                             currentHand.doubleDown();
                             break;
                         }
@@ -201,8 +244,17 @@ public class Blackjack {
 
         dealer.reveal();
 
+        //card counting
+        //now that the dealer revealed both cards also count the second one
+        observer.observeCard(hiddenCard);
+
         while(dealer.getSum() < dealer.passesOn){
-            dealer.acceptCard(shoe.dealOne(true));
+            Card card = shoe.dealOne(true);
+
+            dealer.acceptCard(card);
+
+            //card counting
+            observer.observeCard(card);
         }
 
         if(print)
@@ -257,6 +309,9 @@ public class Blackjack {
                 }
             }
         }
+
+        shoe.display();
+        observer.display();
     }
 
     public void printStats(){

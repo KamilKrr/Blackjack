@@ -54,4 +54,14 @@ public class Shoe {
             shoe[i] = a;
         }
     }
+
+    //only for debugging
+    public void display(){
+        String cards = "";
+        for (int i = 0; i <shoe.length; i++) {
+            cards += shoe[i].getMyValue() + ", ";
+        }
+
+        System.out.println(cards + " | length: " + shoe.length);
+    }
 }
