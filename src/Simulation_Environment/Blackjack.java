@@ -9,27 +9,27 @@ public class Blackjack {
 
     private Player[] players;
 
-    private BasicStrategyPlayer basicStrategyPlayer;
-
     private boolean print = false;
 
-    private double BANKROLL = 1000;
+    private double BANKROLL = 1000000;
 
     public Blackjack(int humanCount, int botCount){
         newGame(humanCount, botCount);
         inputProcessor = new InputProcessor();
-        basicStrategyPlayer = new BasicStrategyPlayer();
     }
 
-    public void newGame(int humanCount, int botCount){
+    public void newGame(int humanPlayerCount, int basicStrategyPlayerCount){
         dealer = new Dealer();
 
         shoe = new Shoe(8, 50);
 
-        players = new Player[humanCount + botCount];
+        players = new Player[humanPlayerCount + basicStrategyPlayerCount];
 
-        for (int i = 0; i < humanCount + botCount; i++) {
-            players[i] = new Player(i >= humanCount ? true : false, BANKROLL);
+        for (int i = 0; i < humanPlayerCount; i++) {
+            players[i] = new HumanPlayer(BANKROLL);
+        }
+        for (int i = 0; i < basicStrategyPlayerCount; i++) {
+            players[humanPlayerCount + i] = new BasicStrategyPlayer(BANKROLL);
         }
     }
 
@@ -47,13 +47,7 @@ public class Blackjack {
             if(print)
                 System.out.println("Player " + players[i].getName() + " your bankroll is " + players[i].getBankroll() + "€, please place your bet as a multiple of 5:");
             while(true){
-                double bet;
-                if(players[i].isAuto()){
-                    bet = basicStrategyPlayer.placeBet(players[i].getStartingBankroll());
-                    players[i].placeBet(bet);
-                    break;
-                }
-                bet = inputProcessor.placeBet();
+                double bet = players[i].placeBet();
                 if(players[i].canPlaceBet(bet)){
                     players[i].placeBet(bet);
                     break;
@@ -132,20 +126,10 @@ public class Blackjack {
                             if(dealer.isAce()) possibleActions += "|insurance(i)";
                             System.out.println(possibleActions);
                         }
-                        String action;
+                        String action = inputProcessor.normalize(currentPlayer.nextAction(dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards()));
 
-                        if(currentPlayer.isAuto()){
-                            action = basicStrategyPlayer.nextAction(dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards());
-                            action = inputProcessor.normalize(action);
-                            if(print)
-                                System.out.println("Basic Srategy Player chooses " + action);
-
-                        }else{
-                            action = inputProcessor.chooseAction();
-                            if(print)
-                                System.out.println("You choose " + action);
-                        }
-
+                        if(print)
+                            System.out.println(currentPlayer.getName() + " chooses " + action);
 
                         //----------SPLIT----------
                         if(action.equals("split")){

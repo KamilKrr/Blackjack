@@ -2,10 +2,11 @@ package Simulation_Environment;
 
 import java.util.HashMap;
 
-public class BasicStrategyPlayer {
+public class BasicStrategyPlayer extends Player{
     public static HashMap<String, HashMap<String, String>> basicStrategy = new HashMap<>();
 
-    public BasicStrategyPlayer() {
+    public BasicStrategyPlayer(double myBankroll){
+        super(myBankroll, "BasicStrategyPlayer");
 
         //dealer Upcard 2
         basicStrategy.put("2", new HashMap<>());
@@ -300,6 +301,7 @@ public class BasicStrategyPlayer {
 
     }
 
+    @Override
     public String nextAction(int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards) {
         String player = "";
         if (softHand) { player = "s"; }
@@ -322,12 +324,19 @@ public class BasicStrategyPlayer {
         return action;
     }
 
-    public double placeBet(double bankroll){
+    @Override
+    public double placeBet(){
         //multiple of 5
         //bet always 1/10 of bankroll
         //int bet =  (int)(5*(Math.round(bankroll/10/5)));
         //return bet;
+        return 1;
 
-        return 10;
+        /*
+        if(bankroll > 10){
+            return 10;
+        }
+        return 5;
+        /**/
     }
 }

@@ -2,9 +2,9 @@ package Simulation_Environment;
 
 import java.util.ArrayList;
 
-public class Player {
+public abstract class Player {
 
-    private double bankroll;
+    protected double bankroll;
     private double startingBankroll;
     private double bet;
 
@@ -17,14 +17,15 @@ public class Player {
 
     private boolean isAuto;
 
+    public abstract String nextAction(int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards);
+    public abstract double placeBet();
+
     public Player() {
         name = "Player#" + (int)Math.floor(Math.random()*100);
     }
 
-    public Player(boolean myIsAuto, double myBankroll) {
-        String type = myIsAuto ? "Bot" : "Player";
+    public Player(double myBankroll, String type) {
         name = type + "#" + (int)Math.floor(Math.random()*100);
-        isAuto = myIsAuto;
         bankroll = myBankroll;
         startingBankroll = myBankroll;
 
@@ -97,6 +98,6 @@ public class Player {
     }
 
     public boolean isBancrupt(){
-        return bankroll <= 0;
+        return bankroll < 5;
     }
 }
