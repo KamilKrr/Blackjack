@@ -54,10 +54,11 @@ public class Engine {
                     }
                 }
                 for (int i = 17; i <= 21; i++) {
-                    int card = i - dealerCard;
-                    if(card == 11) card = 1;
-
-                    probabilities.put(i, shoe.count(card)*1.0 / shoe.getCards().size() * probability + probabilities.get(i));
+                    if (i != dealerCard + 11) {
+                        probabilities.put(i, shoe.count(i - dealerCard)*1.0 / shoe.getCards().size() * probability + probabilities.get(i));
+                    } else {
+                        probabilities.put(i, shoe.count(1)*1.0 / shoe.getCards().size() * probability + probabilities.get(i));
+                    }
                 }
             }
         } else {
