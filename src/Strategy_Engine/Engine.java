@@ -35,7 +35,6 @@ public class Engine {
                 for (int i = dealerCard + 1; i <= 16; i++) {
                     Shoe s = new Shoe(shoe);
                     s.remove(i - dealerCard);
-                    System.out.println(shoe.getCards());
                     dealerProbabilities(s, i, shoe.count(i - dealerCard)*1.0 / shoe.getCards().size() * probability, probabilities, false);
                 }
                 for (int i = 17; i <= 21; i++) {
@@ -55,7 +54,10 @@ public class Engine {
                     }
                 }
                 for (int i = 17; i <= 21; i++) {
-                    probabilities.put(i, shoe.count(i - dealerCard)*1.0 / shoe.getCards().size() * probability + probabilities.get(i));
+                    int card = i - dealerCard;
+                    if(card == 11) card = 1;
+
+                    probabilities.put(i, shoe.count(card)*1.0 / shoe.getCards().size() * probability + probabilities.get(i));
                 }
             }
         } else {
