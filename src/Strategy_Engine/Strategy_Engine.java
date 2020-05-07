@@ -13,17 +13,15 @@ public class Strategy_Engine {
         moves.add("hit");
         moves.add("stand");
         moves.add("double");
-        moves.add("split");
+        //moves.add("split");
 
         //System.out.println("-----------------------");
 
-        Observer o2 = new Observer(1);
+        Observer o2 = new Observer(32);
 
-        int dealerCard = 9;
+        int dealerCard = 6;
 
-        o2.removeCard(dealerCard);
-
-        Engine.bestMove(o2.getShoe(), dealerCard, 15, false, moves);
+        System.out.println("Your next move is: " + Engine.bestMove(o2.getShoe(), dealerCard, 11, false, moves));
     }
 
     public String bestMove(){
