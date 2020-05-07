@@ -18,7 +18,7 @@ public class Engine {
             return "no insurance";
         }
 
-        double h = playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand);
+        double h = playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0);
         double s = playerStandEV(probabilities, playerSum);
         int count = 2;
         double d = 0;
@@ -26,10 +26,10 @@ public class Engine {
         if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; }
         if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; }
 
-        if ((count == 2 && h > s) || (count == 3 && h > s && h > d) || (count == 4 && h > s && h > d && h > p )) { return "hit"; }
-        if ((count == 2 && s > h) || (count == 3 && s > h && s > d) || (count == 4 && s > h && s > d && s > p )) { return "split"; }
-        if ((count == 3 && d > h && d > s) || (count == 4 && d > h && d > s && d > p )) { return "double"; }
-        if (count == 4 && p > h && p > s && p > d) { return "split"; }
+        if ((count == 2 && h >= s) || (count == 3 && h >= s && h >= d) || (count == 4 && h >= s && h >= d && h >= p )) { return "hit"; }
+        if ((count == 2 && s >= h) || (count == 3 && s >= h && s >= d) || (count == 4 && s >= h && s >= d && s >= p )) { return "split"; }
+        if ((count == 3 && d >= h && d >= s) || (count == 4 && d >= h && d >= s && d >= p )) { return "double"; }
+        if (count == 4 && p >= h && p >= s && p >= d) { return "split"; }
 
         return "error";
     }
@@ -98,7 +98,7 @@ public class Engine {
                 ev -= probabilities.get(i);
             }
         }
-        ev += probabilities.get(22);
+        ev -= probabilities.get(22);
 
         return ev;
     }
@@ -123,15 +123,33 @@ public class Engine {
         return ev;
     }
 
-    public static double playerHitEV(Shoe shoe, HashMap<Integer, Double> probabilities, int playerSum, boolean softHand) {
-        double ev = 0;
-        //Hit ev = Hit ev oder Stand ev (je nach dem welches größer ist) mit jeder Karte
+    public static double playerHitEV(Shoe shoe, HashMap<Integer, Double> probabilities, int playerSum, boolean softHand, double ev) {
+        for (int i = playerSum + 1; i <= playerSum + 10; i++) {
+            if (i - playerSum != 1 || i >= 11) {
+                if (i >= 22 && !softHand) {
+                    ev -= shoe.count(i - playerSum) * 1.0 / shoe.getCards().size();
+                } else if (i >= 22) {
+                    Shoe s = new Shoe(shoe);
+                    s.remove(i - playerSum);
+                    ev += Math.max(shoe.count(i - playerSum) * 1.0 / shoe.getCards().size() * playerHitEV(s, probabilities, i - 10, false, ev), shoe.count(i - playerSum) * 1.0 / shoe.getCards().size() * playerStandEV(probabilities, i - 10));
+                } else {
+                    Shoe s = new Shoe(shoe);
+                    s.remove(i - playerSum);
+                    ev += Math.max(shoe.count(i - playerSum) * 1.0 / shoe.getCards().size() * playerHitEV(s, probabilities, i, softHand, ev), shoe.count(i - playerSum) * 1.0 / shoe.getCards().size() * playerStandEV(probabilities, i));
+                }
+            } else {
+                Shoe s = new Shoe(shoe);
+                s.remove(i - playerSum);
+                ev += Math.max(shoe.count(1) * 1.0 / shoe.getCards().size() * playerHitEV(s, probabilities, i + 10, true, ev), shoe.count(1) * 1.0 / shoe.getCards().size() * playerStandEV(probabilities, i + 10));
+            }
+        }
+
         return ev;
     }
 
     public static double playerSplitEV(Shoe shoe, HashMap<Integer, Double> probabilities, int playerSum, boolean softHand) {
         if(softHand) { return playerDoubleEV(shoe, probabilities, 11, true); }
-        return 2.0 * playerHitEV(shoe, probabilities, playerSum/2, false);
+        return 2.0 * playerHitEV(shoe, probabilities, playerSum/2, false, 0);
     }
 
     public static double insuranceEV(Shoe shoe) {
@@ -139,6 +157,5 @@ public class Engine {
         if(ev > 0) { return ev; };
         return 0;
     }
-
 
 }
