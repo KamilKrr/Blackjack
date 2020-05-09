@@ -5,23 +5,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.System.currentTimeMillis;
+
 public class Strategy_Engine {
     public static void main(String[] args){
         Observer o = new Observer(3);
 
-        List<String> moves = new ArrayList<>();
-        moves.add("hit");
-        moves.add("stand");
-        moves.add("double");
+
         //moves.add("split");
 
         //System.out.println("-----------------------");
 
+        long millis = currentTimeMillis();
         Observer o2 = new Observer(32);
-
+        System.out.println(Engine.advantageCalculation(o2.getShoe()));
+        System.out.println(currentTimeMillis() - millis);
+        System.out.println("-----------------");
         int dealerCard = 6;
 
-        System.out.println("Your next move is: " + Engine.bestMove(o2.getShoe(), dealerCard, 11, false, moves));
+        //System.out.println("Your next move is: " + Engine.bestMove(o2.getShoe(), dealerCard, 11, false, Engine.getMoves(3), Engine.dealerProbabilities(o2.getShoe(), dealerCard, 1.0, Engine.dealer, false)));
     }
 
     public String bestMove(){

@@ -6,7 +6,7 @@ import java.util.*;
 public class Engine {
     public static HashMap<Integer, Double> dealer = new HashMap<>();
 
-    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
+    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves, HashMap<Integer, Double> probabilities) {
 
         if (moves.contains("insurance")) {
             if(insuranceEV(shoe) > 0) { return "insurance"; }
@@ -16,7 +16,8 @@ public class Engine {
         for (int i = 17; i <= 22; i++) {
             dealer.put(i, 0.0);
         }
-        HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, isPlayerSoftHand);
+        boolean dealerSoftHand = (dealerCard == 11);
+        //HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, dealerSoftHand);
 
         double h = playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0);
         double s = playerStandEV(probabilities, playerSum);
@@ -25,24 +26,116 @@ public class Engine {
         double p = 0;
 
         //System.out.println(probabilities);
-        System.out.println("Dealer shows " + dealerCard);
+        /* System.out.println("Dealer shows " + dealerCard);
         System.out.println("Your hand: " + playerSum);
         System.out.println("-----------------");
         System.out.println("Expected value when hitting: " + (h*100+100) + "% of your bet");
-        System.out.println("Expected value when standing: " + (s*100+100) + "% of your bet");
-        if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet"); }
-        if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet"); }
-        System.out.println("-----------------");
+        System.out.println("Expected value when standing: " + (s*100+100) + "% of your bet"); */
+        if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; /*System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet"); */}
+        if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; /*System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet"); */}
+        /* System.out.println("-----------------"); */
 
-        String nextMove = "error";
+        String nextMove = "";
         if ((count == 2 && h >= s) || (count == 3 && h >= s && h >= d) || (count == 4 && h >= s && h >= d && h >= p )) { nextMove = "hit"; }
-        if ((count == 2 && s >= h) || (count == 3 && s >= h && s >= d) || (count == 4 && s >= h && s >= d && s >= p )) { nextMove = "stand"; }
-        if ((count == 3 && d >= h && d >= s) || (count == 4 && d >= h && d >= s && d >= p )) { nextMove = "double"; }
-        if (count == 4 && p >= h && p >= s && p >= d) { nextMove = "split"; }
-
+        else if ((count == 2 && s >= h) || (count == 3 && s >= h && s >= d) || (count == 4 && s >= h && s >= d && s >= p )) { nextMove = "stand"; }
+        else if ((count == 3 && d >= h && d >= s) || (count == 4 && d >= h && d >= s && d >= p )) { nextMove = "double"; }
+        else if (count == 4 && p >= h && p >= s && p >= d) { nextMove = "split"; }
+        else{ System.out.println("bestMove ERROR"); }
 
 
         return nextMove;
+    }
+
+    public static double advantageCalculation(Shoe shoe) {
+        double ev = 0;
+        List<String> moves3 = getMoves(3);
+        List<String> moves4 = getMoves(4);
+
+        for (int i = 1; i <= 10; i++) {
+            for (int j = 1; j <= 10; j++) {
+                for (int k = 1; k <= 10; k++) {
+                    if (i != 1 && j != 1 && i != j) {
+                        if (k != 1) {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), k, (i + j), false, moves3) * cardProbability(shoe, new int[]{i, j, k});
+                        } else {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), 11, (i + j), false, moves3) * cardProbability(shoe, new int[]{i, j, k});
+                            ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
+                        }
+                    } else if (i == j && i != 1) {
+                        if (k != 1) {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), k, (i + j), false, moves4) * cardProbability(shoe, new int[]{i, j, k});
+                        } else {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), 11, (i + j), false, moves4) * cardProbability(shoe, new int[]{i, j, k});
+                            ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
+                        }
+                    } else if (i == j) {
+                        if (k != 1) {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), k, 12, true, moves4) * cardProbability(shoe, new int[]{i, j, k});
+                        } else {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), 11, 12, true, moves4) * cardProbability(shoe, new int[]{i, j, k});
+                            ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
+                        }
+                    } else if ((i + j) == 11){
+                        if (k != 1) {
+                            ev += 1.5 * cardProbability(shoe, new int[]{i, j, k});
+                        } else {
+                            ev += 1.5 * cardProbability(shoe, new int[]{i, j, k});;
+                            ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
+                        }
+                    } else {
+                        if (k != 1) {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), k, (i + j + 10), true, moves3) * cardProbability(shoe, new int[]{i, j, k});
+                        } else {
+                            ev += bestMoveEV(makeShoe(shoe, new int[]{i, j, k}), 11, (i + j + 10), true, moves3) * cardProbability(shoe, new int[]{i, j, k});
+                            ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
+                        }
+                    }
+                }
+            }
+        }
+
+        return ev;
+    }
+
+    public static double bestMoveEV (Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
+        for (int i = 17; i <= 22; i++) { dealer.put(i, 0.0); }
+        HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, isPlayerSoftHand);
+        String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves, probabilities);
+        if(move.equals("hit")) { return playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0); }
+        if(move.equals("stand")) { return playerStandEV(probabilities, playerSum); }
+        if(move.equals("double")) { return playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); }
+        if(move.equals("split")) { return playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); }
+        else { System.out.println("convertMoveToEV ERROR"); return -1000.0; }
+    }
+
+    public static double cardProbability (Shoe shoe, int[] cards) {
+        double probability = 1.0;
+        Shoe s = new Shoe(shoe);
+        for (int i = 0; i < cards.length; i++) {
+            probability *= s.count(cards[i]) * 1.0 / s.getCards().size();
+            s.remove(i);
+        }
+        return probability;
+    }
+
+    public static List<String> getMoves (int numberOfMoves) {
+        List<String> moves = new ArrayList<>();
+        if(numberOfMoves > 4 || numberOfMoves < 2) { System.out.println("getMoves ERROR"); return moves; }
+        moves.add("hit");
+        moves.add("stand");
+        if(numberOfMoves == 2) { return moves; }
+        moves.add("double");
+        if(numberOfMoves == 3) { return moves; }
+        moves.add("split");
+        return moves;
+    }
+
+    public static Shoe makeShoe (Shoe shoe, int[] cards) {
+        Shoe s = new Shoe(shoe);
+        for (int i = 0; i < cards.length; i++) {
+            s.remove(cards[i]);
+        }
+        return s;
     }
 
     public static HashMap<Integer, Double> dealerProbabilities(Shoe shoe, int dealerCard, double probability, HashMap<Integer, Double> probabilities, boolean softHand) {
@@ -65,7 +158,6 @@ public class Engine {
                     Shoe s = new Shoe(shoe);
                     if (i != dealerCard + 11) {
                         s.remove(i - dealerCard);
-
                         dealerProbabilities(s, i, shoe.count(i - dealerCard) * 1.0 / shoe.getCards().size() * probability, probabilities, false);
                     } else {
                         s.remove(1);
