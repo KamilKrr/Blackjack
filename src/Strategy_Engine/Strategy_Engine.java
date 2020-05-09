@@ -17,10 +17,15 @@ public class Strategy_Engine {
         //System.out.println("-----------------------");
 
         long millis = currentTimeMillis();
-        Observer o2 = new Observer(32);
+        Observer o2 = new Observer(1);
         System.out.println(Engine.advantageCalculation(o2.getShoe()));
         System.out.println(currentTimeMillis() - millis);
         System.out.println("-----------------");
+        System.out.println(Engine.initCount);
+        System.out.println(Engine.recursionCount);
+        System.out.println(Engine.endCount);
+        System.out.println("-----------------");
+        System.out.println(Engine.otherCount);
         int dealerCard = 6;
 
         //System.out.println("Your next move is: " + Engine.bestMove(o2.getShoe(), dealerCard, 11, false, Engine.getMoves(3), Engine.dealerProbabilities(o2.getShoe(), dealerCard, 1.0, Engine.dealer, false)));

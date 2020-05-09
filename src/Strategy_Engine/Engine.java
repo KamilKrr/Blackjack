@@ -5,9 +5,13 @@ import java.util.*;
 
 public class Engine {
     public static HashMap<Integer, Double> dealer = new HashMap<>();
+    public static int otherCount = 1;
+    public static int initCount = 1;
+    public static int recursionCount = 1;
+    public static int endCount = 1;
 
     public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves, HashMap<Integer, Double> probabilities) {
-
+        otherCount++;
         if (moves.contains("insurance")) {
             if(insuranceEV(shoe) > 0) { return "insurance"; }
             return "no insurance";
@@ -99,6 +103,7 @@ public class Engine {
 
     public static double bestMoveEV (Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
         for (int i = 17; i <= 22; i++) { dealer.put(i, 0.0); }
+        endCount++;
         HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, isPlayerSoftHand);
         String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves, probabilities);
         if(move.equals("hit")) { return playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0); }
@@ -109,6 +114,7 @@ public class Engine {
     }
 
     public static double cardProbability (Shoe shoe, int[] cards) {
+        otherCount++;
         double probability = 1.0;
         Shoe s = new Shoe(shoe);
         for (int i = 0; i < cards.length; i++) {
@@ -119,6 +125,7 @@ public class Engine {
     }
 
     public static List<String> getMoves (int numberOfMoves) {
+        otherCount++;
         List<String> moves = new ArrayList<>();
         if(numberOfMoves > 4 || numberOfMoves < 2) { System.out.println("getMoves ERROR"); return moves; }
         moves.add("hit");
@@ -131,6 +138,7 @@ public class Engine {
     }
 
     public static Shoe makeShoe (Shoe shoe, int[] cards) {
+        otherCount++;
         Shoe s = new Shoe(shoe);
         for (int i = 0; i < cards.length; i++) {
             s.remove(cards[i]);
@@ -140,7 +148,9 @@ public class Engine {
 
     public static HashMap<Integer, Double> dealerProbabilities(Shoe shoe, int dealerCard, double probability, HashMap<Integer, Double> probabilities, boolean softHand) {
         //exit condition
+        initCount++;
         if (probability == 0) return probabilities;
+        recursionCount++;
 
         if (!softHand) {
             if (dealerCard > 10) {
@@ -187,7 +197,6 @@ public class Engine {
                 dealerProbabilities(s, i - 10, shoe.count(i - dealerCard) * 1.0 / shoe.getCards().size() * probability, probabilities, false);
             }
         }
-
         return probabilities;
     }
 
