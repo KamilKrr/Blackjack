@@ -5,13 +5,8 @@ import java.util.*;
 
 public class Engine {
     public static HashMap<Integer, Double> dealer = new HashMap<>();
-    public static int otherCount = 1;
-    public static int initCount = 1;
-    public static int recursionCount = 1;
-    public static int endCount = 1;
 
-    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves, HashMap<Integer, Double> probabilities) {
-        otherCount++;
+    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
         if (moves.contains("insurance")) {
             if(insuranceEV(shoe) > 0) { return "insurance"; }
             return "no insurance";
@@ -21,7 +16,7 @@ public class Engine {
             dealer.put(i, 0.0);
         }
         boolean dealerSoftHand = (dealerCard == 11);
-        //HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, dealerSoftHand);
+        HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, dealerSoftHand);
 
         double h = playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0);
         double s = playerStandEV(probabilities, playerSum);
@@ -30,14 +25,14 @@ public class Engine {
         double p = 0;
 
         //System.out.println(probabilities);
-        /* System.out.println("Dealer shows " + dealerCard);
+        System.out.println("Dealer shows " + dealerCard);
         System.out.println("Your hand: " + playerSum);
         System.out.println("-----------------");
         System.out.println("Expected value when hitting: " + (h*100+100) + "% of your bet");
-        System.out.println("Expected value when standing: " + (s*100+100) + "% of your bet"); */
-        if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; /*System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet"); */}
-        if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; /*System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet"); */}
-        /* System.out.println("-----------------"); */
+        System.out.println("Expected value when standing: " + (s*100+100) + "% of your bet");
+        if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet"); }
+        if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet"); }
+        System.out.println("-----------------");
 
         String nextMove = "";
         if ((count == 2 && h >= s) || (count == 3 && h >= s && h >= d) || (count == 4 && h >= s && h >= d && h >= p )) { nextMove = "hit"; }
@@ -83,7 +78,7 @@ public class Engine {
                         if (k != 1) {
                             ev += 1.5 * cardProbability(shoe, new int[]{i, j, k});
                         } else {
-                            ev += 1.5 * cardProbability(shoe, new int[]{i, j, k});;
+                            ev += 1.5 * cardProbability(shoe, new int[]{i, j, k});
                             ev += insuranceEV(makeShoe(shoe, new int[]{i, j, k}));
                         }
                     } else {
@@ -103,9 +98,8 @@ public class Engine {
 
     public static double bestMoveEV (Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
         for (int i = 17; i <= 22; i++) { dealer.put(i, 0.0); }
-        endCount++;
         HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, isPlayerSoftHand);
-        String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves, probabilities);
+        String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves);
         if(move.equals("hit")) { return playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0); }
         if(move.equals("stand")) { return playerStandEV(probabilities, playerSum); }
         if(move.equals("double")) { return playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); }
@@ -114,7 +108,6 @@ public class Engine {
     }
 
     public static double cardProbability (Shoe shoe, int[] cards) {
-        otherCount++;
         double probability = 1.0;
         Shoe s = new Shoe(shoe);
         for (int i = 0; i < cards.length; i++) {
@@ -125,20 +118,18 @@ public class Engine {
     }
 
     public static List<String> getMoves (int numberOfMoves) {
-        otherCount++;
-        List<String> moves = new ArrayList<>();
-        if(numberOfMoves > 4 || numberOfMoves < 2) { System.out.println("getMoves ERROR"); return moves; }
-        moves.add("hit");
-        moves.add("stand");
-        if(numberOfMoves == 2) { return moves; }
-        moves.add("double");
-        if(numberOfMoves == 3) { return moves; }
-        moves.add("split");
-        return moves;
+            List<String> moves = new ArrayList<>();
+            if(numberOfMoves > 4 || numberOfMoves < 2) { System.out.println("getMoves ERROR"); return moves; }
+            moves.add("hit");
+            moves.add("stand");
+            if(numberOfMoves == 2) { return moves; }
+            moves.add("double");
+            if(numberOfMoves == 3) { return moves; }
+            moves.add("split");
+            return moves;
     }
 
     public static Shoe makeShoe (Shoe shoe, int[] cards) {
-        otherCount++;
         Shoe s = new Shoe(shoe);
         for (int i = 0; i < cards.length; i++) {
             s.remove(cards[i]);
@@ -148,9 +139,7 @@ public class Engine {
 
     public static HashMap<Integer, Double> dealerProbabilities(Shoe shoe, int dealerCard, double probability, HashMap<Integer, Double> probabilities, boolean softHand) {
         //exit condition
-        initCount++;
         if (probability == 0) return probabilities;
-        recursionCount++;
 
         if (!softHand) {
             if (dealerCard > 10) {
