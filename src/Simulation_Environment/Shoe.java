@@ -1,5 +1,6 @@
 package Simulation_Environment;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -18,7 +19,7 @@ public class Shoe {
         assembleNewShoe();
     }
 
-    private void assembleNewShoe(){
+    public void assembleNewShoe(){
         nextCardPosition = 0;
         shoe = new Card[52*decks];
 
@@ -31,16 +32,21 @@ public class Shoe {
         shuffle();
     }
 
+    public boolean usedOver(int percent){
+        return (nextCardPosition > shoe.length*percent/100);
+    }
+
     public Card dealOne(boolean faceUpValue){
-        if(nextCardPosition > shoe.length*percentToReshuffle/100){
-            assembleNewShoe();
-        }
         if (nextCardPosition > -1 && nextCardPosition < shoe.length) {
             shoe[nextCardPosition].setFaceUp(faceUpValue);
             return shoe[nextCardPosition++];
         }
         System.out.println("No Cards left");
         return null;
+    }
+
+    public Card[] getCards(){
+        return Arrays.copyOfRange(shoe, nextCardPosition, shoe.length);
     }
 
     public void shuffle(){

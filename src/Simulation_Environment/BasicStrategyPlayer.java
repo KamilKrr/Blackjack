@@ -1,6 +1,9 @@
 package Simulation_Environment;
 
+import Strategy_Engine.Observer;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class BasicStrategyPlayer extends Player{
     public static HashMap<String, HashMap<String, String>> basicStrategy = new HashMap<>();
@@ -302,14 +305,13 @@ public class BasicStrategyPlayer extends Player{
     }
 
     @Override
-    public String nextAction(int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards) {
+    public String nextAction(Observer o, List<String> moves, int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards) {
         String player = "";
         if (softHand) { player = "s"; }
         player = player + playerhand;
         String dealer = dealerhand + "";
 
         String action = basicStrategy.get(dealer).get(player);
-
 
         if (action.charAt(0) == 'D') {
             if(numberOfCards == 2 && bankroll >= currentBet) { action = "D"; }

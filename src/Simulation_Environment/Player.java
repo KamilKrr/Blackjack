@@ -1,6 +1,9 @@
 package Simulation_Environment;
 
+import Strategy_Engine.Observer;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Player {
 
@@ -17,7 +20,7 @@ public abstract class Player {
 
     private boolean isAuto;
 
-    public abstract String nextAction(int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards);
+    public abstract String nextAction(Observer o, List<String> moves, int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards);
     public abstract double placeBet();
 
     public Player() {

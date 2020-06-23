@@ -2,6 +2,9 @@ package Simulation_Environment;
 
 import Strategy_Engine.Observer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Blackjack {
     private InputProcessor inputProcessor;
 
@@ -11,24 +14,28 @@ public class Blackjack {
 
     private Player[] players;
 
-    private boolean print = true;
+    private boolean print = false;
+    private boolean debugEngine = false;
 
     private double BANKROLL = 1000000;
 
     //Card counter for the Strategy Engine
-    private Observer observer = new Observer(1);
+    private Observer observer = new Observer(8);
 
-    public Blackjack(int humanCount, int botCount){
-        newGame(humanCount, botCount);
+    public Blackjack(int humanPlayerCount, int basicStrategyPlayerCount, int strategyEnginePlayerCount){
+        if(humanPlayerCount > 0) {
+            print = true;
+        }
+        newGame(humanPlayerCount, basicStrategyPlayerCount, strategyEnginePlayerCount);
         inputProcessor = new InputProcessor();
     }
 
-    public void newGame(int humanPlayerCount, int basicStrategyPlayerCount){
+    public void newGame(int humanPlayerCount, int basicStrategyPlayerCount, int strategyEnginePlayerCount){
         dealer = new Dealer();
 
-        shoe = new Shoe(1, 50);
+        shoe = new Shoe(8, 50);
 
-        players = new Player[humanPlayerCount + basicStrategyPlayerCount];
+        players = new Player[humanPlayerCount + basicStrategyPlayerCount + strategyEnginePlayerCount];
 
         for (int i = 0; i < humanPlayerCount; i++) {
             players[i] = new HumanPlayer(BANKROLL);
@@ -36,9 +43,18 @@ public class Blackjack {
         for (int i = 0; i < basicStrategyPlayerCount; i++) {
             players[humanPlayerCount + i] = new BasicStrategyPlayer(BANKROLL);
         }
+        for (int i = 0; i < strategyEnginePlayerCount; i++) {
+            players[humanPlayerCount + basicStrategyPlayerCount + i] = new StrategyEnginePlayer(BANKROLL);
+        }
     }
 
     public void newRound(){
+
+        if(shoe.usedOver(70)){
+            shoe.assembleNewShoe();
+            observer.restoreAllCards();
+            //System.out.println("reassembling");
+        }
         //hand of the dealer
         dealer.newHand();
 
@@ -140,15 +156,40 @@ public class Blackjack {
                         if(currentHand.isBlocked()){
                             break;
                         }
-                        if(print) {
-                            String possibleActions = "stand(s)|hit(h)";
-                            if(currentHand.getNumberOfCards() == 2 && currentPlayer.getBet() * 2 <= currentPlayer.getBankroll()) possibleActions += "|double(d)";
-                            if(currentHand.isDoubleCard() && currentPlayer.getBet() * 2 <= currentPlayer.getBankroll()) possibleActions += "|split(p)";
-                            if(dealer.isAce()) possibleActions += "|insurance(i)";
-                            System.out.println(possibleActions);
-                        }
-                        String action = inputProcessor.normalize(currentPlayer.nextAction(dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards()));
 
+                        List<String> moves = new ArrayList<>();
+                        String possibleActions = "stand(s)|hit(h)";
+                        moves.add("hit");
+                        moves.add("stand");
+                        if(currentHand.getNumberOfCards() == 2 && currentPlayer.getBet() * 2 <= currentPlayer.getBankroll()) {
+                            possibleActions += "|double(d)";
+                            moves.add("double");
+                        }
+                        if(currentHand.isDoubleCard() && currentPlayer.getBet() * 2 <= currentPlayer.getBankroll()){
+                            possibleActions += "|split(p)";
+                            moves.add("split");
+                        }
+                        if(dealer.isAce()) possibleActions += "|insurance(i)";
+                        if(print)
+                            System.out.println(possibleActions);
+                        String action = inputProcessor.normalize(currentPlayer.nextAction(observer, moves, dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards()));
+
+
+                        //debug engine vs basic strategy
+                        if(debugEngine){
+                            String basicSTrategyAction = inputProcessor.normalize(new BasicStrategyPlayer(BANKROLL).nextAction(observer, moves, dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards()));
+                            String engineAction = inputProcessor.normalize(new StrategyEnginePlayer(BANKROLL).nextAction(observer, moves, dealer.getSum(), currentHand.getSum(), currentHand.containsAce(), currentHand.isDoubleCard(), (int)currentPlayer.getBet(), (int)currentPlayer.getBankroll()-(int)currentPlayer.getBet(), currentHand.getNumberOfCards()));
+
+                            if(basicSTrategyAction != engineAction){
+                                System.out.println("-------------------");
+                                System.out.println("Basic strategy says: " + basicSTrategyAction);
+                                System.out.println("Engine says: " + engineAction);
+                                System.out.println("Dealer: " + dealer.getSum());
+                                System.out.println("Player: " + currentHand.displayHand());
+                                System.out.println("Cards in deck: " + observer.getShoe().getCards());
+                                System.out.println("-------------------");
+                            }
+                        }
                         if(print)
                             System.out.println(currentPlayer.getName() + " chooses " + action);
 
@@ -309,9 +350,10 @@ public class Blackjack {
                 }
             }
         }
-
+        /*
         shoe.display();
         observer.display();
+        /**/
     }
 
     public void printStats(){

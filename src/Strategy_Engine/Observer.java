@@ -13,7 +13,7 @@ public class Observer {
     private ArrayList<Integer> myHand = new ArrayList<>();
     private int dealer;
 
-    private int cardSetsInDeck = 1;
+    private int cardSetsInDeck = 4;
 
 
     public Observer(int decksInShoe){
@@ -37,6 +37,15 @@ public class Observer {
         System.out.println(shoe.countEqualsOrHigher(1));
         /**/
 
+    }
+
+    public void restoreAllCards(){
+        shoe.removeAll();
+        for (int i = 0; i < this.decksInShoe; i++) {
+            for (int j = 0; j < cardSetsInDeck; j++) {
+                shoe.addAll(deck);
+            }
+        }
     }
 
     public Shoe getShoe(){

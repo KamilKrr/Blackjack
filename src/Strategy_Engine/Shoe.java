@@ -22,6 +22,10 @@ public class Shoe {
         cards.addAll(extraCards);
     }
 
+    public void removeAll(){
+        cards.clear();
+    }
+
     public ArrayList<Integer> getCards() {
         return cards;
     }

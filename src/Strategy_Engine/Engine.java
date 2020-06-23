@@ -6,7 +6,7 @@ import java.util.*;
 public class Engine {
     public static HashMap<Integer, Double> dealer = new HashMap<>();
 
-    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
+    public static String bestMove(Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves, boolean printEVs) {
         if (moves.contains("insurance")) {
             if(insuranceEV(shoe) > 0) { return "insurance"; }
             return "no insurance";
@@ -24,15 +24,36 @@ public class Engine {
         double d = 0;
         double p = 0;
 
-        //System.out.println(probabilities);
+
+        System.out.println("Dealer Probabilities: " + probabilities);
+        /*
         System.out.println("Dealer shows " + dealerCard);
         System.out.println("Your hand: " + playerSum);
         System.out.println("-----------------");
         System.out.println("Expected value when hitting: " + (h*100+100) + "% of your bet");
-        System.out.println("Expected value when standing: " + (s*100+100) + "% of your bet");
-        if (moves.contains("double")) { d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet"); }
-        if (moves.contains("split")) { p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand); count++; System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet"); }
         System.out.println("-----------------");
+        /**/
+
+        if (moves.contains("double")) {
+            d = playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand);
+            count++;
+            //System.out.println("Expected value when doubling: " + (d*100+100) + "% of your bet");
+        }
+        if (moves.contains("split")) {
+            p = playerSplitEV(shoe, probabilities, playerSum, isPlayerSoftHand);
+            count++;
+            //System.out.println("Expected value when splitting: " + (p*100+100) + "% of your bet");
+        }
+
+        //for demonstration
+        //otherwise printEVs
+        if(true){
+            System.out.println("Hit EV:" + h);
+            System.out.println("Stand EV:" + s);
+            System.out.println("double EV:" + d);
+            System.out.println("split EV0:" + p);
+            System.out.println("_________________________");
+        }
 
         String nextMove = "";
         if ((count == 2 && h >= s) || (count == 3 && h >= s && h >= d) || (count == 4 && h >= s && h >= d && h >= p )) { nextMove = "hit"; }
@@ -99,7 +120,7 @@ public class Engine {
     public static double bestMoveEV (Shoe shoe, int dealerCard, int playerSum, boolean isPlayerSoftHand, List<String> moves) {
         for (int i = 17; i <= 22; i++) { dealer.put(i, 0.0); }
         HashMap<Integer, Double> probabilities = dealerProbabilities(shoe, dealerCard, 1.0, dealer, isPlayerSoftHand);
-        String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves);
+        String move = bestMove(shoe, dealerCard, playerSum, isPlayerSoftHand, moves, false);
         if(move.equals("hit")) { return playerHitEV(shoe, probabilities, playerSum, isPlayerSoftHand, 0); }
         if(move.equals("stand")) { return playerStandEV(probabilities, playerSum); }
         if(move.equals("double")) { return playerDoubleEV(shoe, probabilities, playerSum, isPlayerSoftHand); }

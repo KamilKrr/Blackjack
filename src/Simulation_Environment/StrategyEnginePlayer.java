@@ -1,26 +1,24 @@
 package Simulation_Environment;
 
+import Strategy_Engine.Strategy_Engine;
+
 import Strategy_Engine.Observer;
 
 import java.util.List;
 
-public class HumanPlayer extends Player{
+public class StrategyEnginePlayer extends Player{
 
-    InputProcessor inputProcessor;
-
-    public HumanPlayer(double myBankroll){
-        super(myBankroll, "Human");
-
-        inputProcessor = new InputProcessor();
+    public StrategyEnginePlayer(double myBankroll){
+        super(myBankroll, "StartegyEnginePlayer");
     }
 
     @Override
     public String nextAction(Observer o, List<String> moves, int dealerhand, int playerhand, boolean softHand, boolean doubleCard, int currentBet, int bankroll, int numberOfCards) {
-        return inputProcessor.chooseAction();
+        return Strategy_Engine.bestMove(o, dealerhand, playerhand, softHand, moves);
     }
 
     @Override
     public double placeBet() {
-        return inputProcessor.placeBet();
+        return 1;
     }
 }
